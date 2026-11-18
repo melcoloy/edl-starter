@@ -176,7 +176,7 @@ def test_update_only_changes_sent_fields(client):
     create_response = client.post("/tasks", json={
         "title": "Tâche à modifier",
         "description": "Description initiale",
-        "priority": "medium"
+        "priority": "high"
     })
     task_id = create_response.json()["id"]
 
@@ -189,7 +189,7 @@ def test_update_only_changes_sent_fields(client):
     assert updated_task["status"] == "done"
     assert updated_task["title"] == "Tâche à modifier"
     assert updated_task["description"] == "Description initiale"
-    assert updated_task["priority"] == "medium"
+    assert updated_task["priority"] == "high"
 
 
 def test_update_nonexistent_task(client):
