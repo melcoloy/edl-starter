@@ -9,6 +9,8 @@ Structure de chaque test :
 3. ASSERT - Vérifier la réponse
 """
 
+from urllib import response
+
 import pytest
 
 
