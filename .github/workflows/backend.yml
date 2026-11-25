@@ -1,0 +1,39 @@
+name: Backend Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:            # aussi sur les pull requests (indispensable à l'exercice 4)
+    branches: [main]
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Récupère le code du dépôt sur la machine virtuelle de GitHub
+      - name: Checkout code
+        uses: actions/checkout@v7
+
+      # Installe Python 3.11 et met en cache les paquets pip pour accélérer les runs suivants
+      - name: Setup Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      # Installe uv, qui n'est pas présent par défaut sur la machine GitHub
+      - name: Install UV
+        run: pip install uv
+
+      # Installe les dépendances du backend (le workflow démarre à la racine, d'où le cd)
+      - name: Install dependencies
+        run: |
+          cd backend
+          uv sync
+
+      # Lance les tests avec la couverture (chaque run: repart de la racine, donc on refait le cd)
+      - name: Run tests
+        run: |
+          cd backend
+          uv run pytest -v --cov
