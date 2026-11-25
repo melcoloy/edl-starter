@@ -1,0 +1,42 @@
+name: Frontend Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  frontend:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Récupère le code du dépôt sur la machine virtuelle de GitHub
+      - name: Checkout code
+        uses: actions/checkout@v7
+
+      # Installe Node.js 24 et met en cache les paquets npm (clé de cache = package-lock.json du frontend)
+      - name: Setup Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      # Installe exactement les versions de package-lock.json (npm ci est plus fiable que npm install en CI)
+      - name: Install dependencies
+        run: |
+          cd frontend
+          npm ci
+
+      # Lance les tests une seule fois (--run), sinon Vitest resterait en mode surveillance et la CI ne finirait jamais
+      - name: Run tests
+        run: |
+          cd frontend
+          npm test -- --run
+
+      # Vérifie que l'application compile (TypeScript + Vite) sans erreur
+      - name: Build
+        run: |
+          cd frontend
+          npm run build
